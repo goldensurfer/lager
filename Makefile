@@ -1,52 +1,14 @@
-.PHONY: rel stagedevrel deps test
+PROJECT = lager
 
-all: deps compile
+ERLC_OPTS = +debug_info +warn_export_all +warn_export_vars +warn_shadow_vars +warn_obsolete_guard
 
-compile: deps
-	./rebar compile
+PLT_APPS = hipe sasl mnesia crypto compiler syntax_tools
+DIALYZER_OPTS = -Werror_handling -Wrace_conditions -Wunmatched_returns | fgrep -v -f ./dialyzer.ignore-warning
+# -Wunderspecs
 
-deps:
-	test -d deps || ./rebar get-deps
+DEPS_DIR = ../../deps
+DEPS = goldrush
 
-clean:
-	./rebar clean
+dep_goldrush = https://github.com/goldensurfer/goldrush 0.2
 
-distclean: clean
-	./rebar delete-deps
-
-test:
-	./rebar compile eunit
-
-##
-## Doc targets
-##
-docs:
-	./rebar doc
-
-APPS = kernel stdlib sasl erts ssl tools os_mon runtime_tools crypto inets \
-	xmerl webtool snmp public_key mnesia eunit
-COMBO_PLT = $(HOME)/.riak_combo_dialyzer_plt
-
-check_plt: compile
-	dialyzer --check_plt --plt $(COMBO_PLT) --apps $(APPS)
-
-build_plt: compile
-	dialyzer --build_plt --output_plt $(COMBO_PLT) --apps $(APPS)
-
-dialyzer: compile
-	@echo
-	@echo Use "'make check_plt'" to check PLT prior to using this target.
-	@echo Use "'make build_plt'" to build PLT prior to using this target.
-	@echo
-	@sleep 1
-	dialyzer -Wunmatched_returns --plt $(COMBO_PLT) ebin | \
-	    fgrep -v -f ./dialyzer.ignore-warnings
-
-cleanplt:
-	@echo 
-	@echo "Are you sure?  It takes about 1/2 hour to re-build."
-	@echo Deleting $(COMBO_PLT) in 5 seconds.
-	@echo 
-	sleep 5
-	rm $(COMBO_PLT)
-
+include erlang.mk
