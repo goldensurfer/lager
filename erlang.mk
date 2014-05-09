@@ -177,8 +177,11 @@ endef
 $(foreach dep,$(DEPS),$(eval $(call dep_target,$(dep))))
 
 deps: $(ALL_DEPS_DIRS)
+	echo "curdir-lager"
+	echo $(CURDIR)
 	@for dep in $(ALL_DEPS_DIRS) ; do \
 		if [ -f $$dep/Makefile ] ; then \
+			echo $(MAKE) -C $$dep ; \
 			$(MAKE) -C $$dep ; \
 		else \
 			echo "include $(CURDIR)/erlang.mk" | $(MAKE) -f - -C $$dep ; \

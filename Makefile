@@ -6,7 +6,7 @@ PLT_APPS = hipe sasl mnesia crypto compiler syntax_tools
 DIALYZER_OPTS = -Werror_handling -Wrace_conditions -Wunmatched_returns | fgrep -v -f ./dialyzer.ignore-warning
 # -Wunderspecs
 
-DEPS_DIR = ../../deps
+DEPS_DIR = deps
 DEPS = goldrush
 
 dep_goldrush = https://github.com/goldensurfer/goldrush 0.2
